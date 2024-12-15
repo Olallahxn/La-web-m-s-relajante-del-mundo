@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fondo Azul con Botón</title>
+    
+    <style>
+        html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Esto oculta las barras de desplazamiento */
+}
+
+        body {
+            
+            background-color: rgb(28, 130, 255); /* Color de fondo azul */
+            display: flex; /* Alinear contenido en el centro */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Colocar elementos en columna */
+            height: 100vh; /* Altura de la pantalla completa */
+            margin: 0; /* Quitar márgenes */
+            color: white; /* Texto blanco */
+            font-family: Arial, sans-serif;
+        }
+        button {
+      position: absolute;
+      font-size: 20px;
+      padding: 10px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      z-index: 20600;
+    }
+    button:hover {
+      background-color: #e60000;
+    }
+    button:disabled {
+      background-color: grey;
+      cursor: not-allowed;
+    }
+
+    #gif-premium {
+            display: none;             /* Inicialmente oculto */
+    position: fixed;           /* Fijo en la pantalla */
+    top: 10px;                 /* 10px desde el borde superior */
+    right: 10px;               /* 10px desde el borde derecho */
+    width: 579px;              /* Ancho del GIF */
+    height: auto;              /* Mantener la proporción del GIF */
+    z-index: 1100;             /* Asegura que el GIF esté por encima de otros elementos */
+    max-width: 100vw;          /* Asegura que no se desborde del ancho de la pantalla */
+    max-height: 100vh;         /* Asegura que no se desborde de la altura de la pantalla */
+}
+
+        
+        #ventana-web {
+    width: 500px;
+    height: 400px;
+    background-color: white;
+    border: 2px solid #000;
+    border-radius: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 13000;
+    display: none; /* Ocultamos la ventana al inicio */
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño */
+}
+
+#barra-titulo {
+    background-color: #f1f1f1;
+    height: 30px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    font-size: 14px;
+}
+
+#boton-cerrar {
+    width: 20px;
+    height: 20px;
+    background-color: #ff0000;
+    border-radius: 50%;
+    cursor: not-allowed; /* Simula un botón no clickeable */
+}
+
+#contenido-ventana {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#texto-ventana {
+    font-family: "Courier New", monospace;
+    font-size: 30px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0; /* El texto empieza oculto */
+    animation: escribir 5s steps(40) 1s forwards; /* Animación de escritura */
+    white-space: normal;
+}
+
+@keyframes escribir {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+#barra-cargando {
+    width: 100%; /* Ancho total del contenedor */ /* Separación desde el texto */
+    position: relative; /* Para controlar la posición de la barra */
+    height: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#barra {
+    width: 0%; /* Inicialmente la barra tiene 0% de ancho */
+    height: 10px;
+    background-color: red; /* Barra roja */
+    border-radius: 5px;
+    animation: cargarBarra 5s linear forwards; /* Animación de la barra */
+}
+
+#cargando-texto {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #333;
+}
+
+@keyframes cargarBarra {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+        .pixel-glitch {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 0, 0, 0.8); /* Color inicial */
+    z-index: 14000;
+    animation: glitch-pixel 0.4s ease-out forwards; /* Duración del glitch */
+}
+
+@keyframes glitch-pixel {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(calc(-20px + 40px * random()), calc(-20px + 40px * random()));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+}
+
+        .error {
+            position: absolute;
+            color: white;
+            background-color: red;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 80px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 12000;
+            animation: errorAnimation 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes errorAnimation {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #video-premium {
+            padding: 0; /* Sin relleno */
+            margin: 0; /* Sin márgenes */
+            display: none; /* Oculto al principio */
+    position: fixed; /* Posición fija */
+    bottom: 0%;
+    left: 0%; /* Centrado horizontalmente */
+    width: 640px; /* Ancho del video */
+    height: 360px; /* Proporción estándar del video */
+    z-index: 1110; /* Sobre otros elementos */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra */
+    border-radius: 10px; /* Bordes redondeados */
+}
+#video-premium iframe {
+    width: 100%;
+    height: 100%;
+    border: none; /* Elimina bordes si existieran */
+}
+
+        #letrero-premium {
+            display: none; /* Oculto inicialmente */
+            position: absolute;
+            top: 0; /* En la parte superior */
+            left: 0;
+            width: 100%; /* Ancho completo */
+            text-align: center; /* Centrar el texto */
+            font-size: 24px; /* Tamaño de letra */
+            font-weight: bold; /* Negrita */
+            background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro translúcido */
+            color: gold; /* Texto dorado */
+            padding: 10px 0;
+            z-index: 1100; /* Aseguramos que esté sobre todo */
+            animation: moverTexto 5s infinite linear; /* Animación de texto */
+        }
+        @keyframes moverTexto {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        #letrero-premium {
+    animation: moverTexto 7s infinite linear; /* Cambia 5s por 10s */
+}
+         /* Barra de relajación en la esquina superior derecha */
+         #barra-relajacion {
+            position: absolute;
+            top: 20px; /* Un poco abajo del borde superior */
+            right: 20px; /* A la derecha */
+            width: 200px; /* Ancho de la barra */
+            height: 30px; /* Altura de la barra */
+            background-color: #ccc; /* Fondo gris de la barra */
+            border-radius: 15px; /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra de la barra */
+            display: none; /* Ocultar la barra inicialmente */
+            z-index: 1004;
+            
+        }
+
+        /* La parte "rellena" de la barra, que indica el porcentaje */
+        #progreso {
+            height: 100%; /* Altura de la barra */
+            width: 50%; /* La barra está al 50% */
+            background-color: rgb(102, 227, 154); /* Color verde para indicar progreso */
+            border-radius: 15px;
+            text-align: center; /* Centrar el texto dentro de la barra */
+            line-height: 30px; /* Centrar el texto verticalmente */
+            color: white; /* Color del texto */
+            font-weight: bold; /* Texto en negrita */
+           
+        }
+        button {
+            background-color: white; /* Fondo del botón */
+            color: rgb(28, 130, 255); /* Texto azul */
+            border: none; /* Sin borde */
+            padding: 15px 30px; /* Espaciado del botón */
+            font-size: 18px; /* Tamaño del texto */
+            cursor: pointer; /* Cambia el cursor a mano */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Sombra */
+        }
+        button:hover {
+            background-color: lightgray; /* Color al pasar el ratón */
+        }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fondo Azul con Botón</title>
+    
+    <style>
+        html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Esto oculta las barras de desplazamiento */
+}
+
+        body {
+            
+            background-color: rgb(28, 130, 255); /* Color de fondo azul */
+            display: flex; /* Alinear contenido en el centro */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Colocar elementos en columna */
+            height: 100vh; /* Altura de la pantalla completa */
+            margin: 0; /* Quitar márgenes */
+            color: white; /* Texto blanco */
+            font-family: Arial, sans-serif;
+        }
+        button {
+      position: absolute;
+      font-size: 20px;
+      padding: 10px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      z-index: 20600;
+    }
+    button:hover {
+      background-color: #e60000;
+    }
+    button:disabled {
+      background-color: grey;
+      cursor: not-allowed;
+    }
+
+    #gif-premium {
+            display: none;             /* Inicialmente oculto */
+    position: fixed;           /* Fijo en la pantalla */
+    top: 10px;                 /* 10px desde el borde superior */
+    right: 10px;               /* 10px desde el borde derecho */
+    width: 579px;              /* Ancho del GIF */
+    height: auto;              /* Mantener la proporción del GIF */
+    z-index: 1100;             /* Asegura que el GIF esté por encima de otros elementos */
+    max-width: 100vw;          /* Asegura que no se desborde del ancho de la pantalla */
+    max-height: 100vh;         /* Asegura que no se desborde de la altura de la pantalla */
+}
+
+        
+        #ventana-web {
+    width: 500px;
+    height: 400px;
+    background-color: white;
+    border: 2px solid #000;
+    border-radius: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 13000;
+    display: none; /* Ocultamos la ventana al inicio */
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño */
+}
+
+#barra-titulo {
+    background-color: #f1f1f1;
+    height: 30px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    font-size: 14px;
+}
+
+#boton-cerrar {
+    width: 20px;
+    height: 20px;
+    background-color: #ff0000;
+    border-radius: 50%;
+    cursor: not-allowed; /* Simula un botón no clickeable */
+}
+
+#contenido-ventana {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#texto-ventana {
+    font-family: "Courier New", monospace;
+    font-size: 30px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0; /* El texto empieza oculto */
+    animation: escribir 5s steps(40) 1s forwards; /* Animación de escritura */
+    white-space: normal;
+}
+
+@keyframes escribir {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+#barra-cargando {
+    width: 100%; /* Ancho total del contenedor */ /* Separación desde el texto */
+    position: relative; /* Para controlar la posición de la barra */
+    height: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#barra {
+    width: 0%; /* Inicialmente la barra tiene 0% de ancho */
+    height: 10px;
+    background-color: red; /* Barra roja */
+    border-radius: 5px;
+    animation: cargarBarra 5s linear forwards; /* Animación de la barra */
+}
+
+#cargando-texto {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #333;
+}
+
+@keyframes cargarBarra {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+        .pixel-glitch {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 0, 0, 0.8); /* Color inicial */
+    z-index: 14000;
+    animation: glitch-pixel 0.4s ease-out forwards; /* Duración del glitch */
+}
+
+@keyframes glitch-pixel {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(calc(-20px + 40px * random()), calc(-20px + 40px * random()));
+    }
+    100% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+}
+
+        .error {
+            position: absolute;
+            color: white;
+            background-color: red;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 80px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 12000;
+            animation: errorAnimation 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes errorAnimation {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #video-premium {
+            padding: 0; /* Sin relleno */
+            margin: 0; /* Sin márgenes */
+            display: none; /* Oculto al principio */
+    position: fixed; /* Posición fija */
+    bottom: 0%;
+    left: 0%; /* Centrado horizontalmente */
+    width: 640px; /* Ancho del video */
+    height: 360px; /* Proporción estándar del video */
+    z-index: 1110; /* Sobre otros elementos */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra */
+    border-radius: 10px; /* Bordes redondeados */
+}
+#video-premium iframe {
+    width: 100%;
+    height: 100%;
+    border: none; /* Elimina bordes si existieran */
+}
+
+        #letrero-premium {
+            display: none; /* Oculto inicialmente */
+            position: absolute;
+            top: 0; /* En la parte superior */
+            left: 0;
+            width: 100%; /* Ancho completo */
+            text-align: center; /* Centrar el texto */
+            font-size: 24px; /* Tamaño de letra */
+            font-weight: bold; /* Negrita */
+            background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro translúcido */
+            color: gold; /* Texto dorado */
+            padding: 10px 0;
+            z-index: 1100; /* Aseguramos que esté sobre todo */
+            animation: moverTexto 5s infinite linear; /* Animación de texto */
+        }
+        @keyframes moverTexto {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        #letrero-premium {
+    animation: moverTexto 7s infinite linear; /* Cambia 5s por 10s */
+}
+         /* Barra de relajación en la esquina superior derecha */
+         #barra-relajacion {
+            position: absolute;
+            top: 20px; /* Un poco abajo del borde superior */
+            right: 20px; /* A la derecha */
+            width: 200px; /* Ancho de la barra */
+            height: 30px; /* Altura de la barra */
+            background-color: #ccc; /* Fondo gris de la barra */
+            border-radius: 15px; /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra de la barra */
+            display: none; /* Ocultar la barra inicialmente */
+            z-index: 1004;
+            
+        }
+
+        /* La parte "rellena" de la barra, que indica el porcentaje */
+        #progreso {
+            height: 100%; /* Altura de la barra */
+            width: 50%; /* La barra está al 50% */
+            background-color: rgb(102, 227, 154); /* Color verde para indicar progreso */
+            border-radius: 15px;
+            text-align: center; /* Centrar el texto dentro de la barra */
+            line-height: 30px; /* Centrar el texto verticalmente */
+            color: white; /* Color del texto */
+            font-weight: bold; /* Texto en negrita */
+           
+        }
+        button {
+            background-color: white; /* Fondo del botón */
+            color: rgb(28, 130, 255); /* Texto azul */
+            border: none; /* Sin borde */
+            padding: 15px 30px; /* Espaciado del botón */
+            font-size: 18px; /* Tamaño del texto */
+            cursor: pointer; /* Cambia el cursor a mano */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Sombra */
+        }
+        button:hover {
+            background-color: lightgray; /* Color al pasar el ratón */
+        }
+        #imagen-emergente {
+            display: none; /* Ocultar la imagen inicialmente */
+            position: fixed; /* Fijo en la pantalla */
+            top: 50%; /* Centrar verticalmente */
+            left: 50%; /* Centrar horizontalmente */
+            transform: translate(-50%, -50%); /* Ajustar la posición exacta */
+            z-index: 1000; /* Mostrar sobre todo lo demás */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra */
+            border-radius: 10px; /* Bordes redondeados */
+        }
+
+        #overlay {
+            display: none; /* Ocultar el fondo oscuro inicialmente */
+            position: fixed; /* Fijo en la pantalla */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro translúcido */
+            z-index: 999; /* Debajo de la imagen */
+        }
+
+        #imagen-emergente img {
+            max-width: 100%; /* Ajustar la imagen al tamaño disponible */
+            border-radius: 10px; /* Bordes redondeados */
+        }
+
+        #boton-continuar {
+            display: none; /* Ocultar el botón inicialmente */
+            position: absolute; /* Colocarlo sobre la imagen */
+            bottom: 20px; /* A 20px del borde inferior */
+            left: 20px; /* A 20px del borde izquierdo */
+            padding: 15px 30px;
+            background-color: white;
+            color: rgb(28, 130, 255);
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 1001; /* Más alto que #overlay */
+        }
+
+        #boton-continuar:hover {
+            background-color: lightgray;
+        }
+
+        #nueva-imagen,
+        #video {
+            display: none; /* Ocultar inicialmente */
+            text-align: center;
+            margin-top: 20px;
+        }
+
+               #video {
+            position: absolute; /* Posición fija */
+            top: 0; /* En la esquina superior */
+            left: 0; /* En la esquina izquierda */
+            width: 640px; /* Tamaño del video */
+            height: 360px; /* Mantén la proporción del video */
+            z-index: 1002; /* Asegúrate de que esté encima de todo */
+        }
+
+        #video iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #nueva-imagen img {
+            position: fixed;
+            bottom: 20px; /* 20px desde la parte inferior */
+            right: 20px; /* 20px desde la parte derecha */
+            width: 600px; /* Ajusta el tamaño de la imagen */
+            height: auto;
+            z-index: 1003; /* Asegúrate de que esté sobre otros elementos */
+        }
+
+        #gif-premium {
+            display: none;             /* Inicialmente oculto */
+    position: fixed;           /* Fijo en la pantalla */
+    top: 10px;                 /* 10px desde el borde superior */
+    right: 10px;               /* 10px desde el borde derecho */
+    width: 579px;              /* Ancho del GIF */
+    height: auto;              /* Mantener la proporción del GIF */
+    z-index: 1100;             /* Asegura que el GIF esté por encima de otros elementos */
+    max-width: 100vw;          /* Asegura que no se desborde del ancho de la pantalla */
+    max-height: 100vh;         /* Asegura que no se desborde de la altura de la pantalla */
+}
+
+#gif-premium img {
+    width: 100%;               /* El GIF se ajusta al 100% del contenedor */
+    height: auto;              /* Mantener la proporción del GIF */
+}
+
+
+        #boton-premium {
+            display: none;
+            margin-top: 20px;
+            background-color: rgb(240, 142, 127);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+              z-index: 1300;
+        }
+
+        #boton-premium:hover {
+            background-color: orange;
+        }
+
+        .contenedor-imagen {
+            display: flex;
+            justify-content: center;
+        }
+
+        #texto-inicial {
+    position: relative;
+    top: -50px; /* Ajusta este valor según necesites */
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div id="video-premium">
+        <iframe 
+    id="video-premium-iframe"
+    frameborder="0" 
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+</iframe>
+
+</iframe>
+    </div>
+    
+
+     <!-- Letrero en movimiento -->
+     <div id="letrero-premium">Relajación premium: ACTIVADA</div>
+
+    <div id="barra-relajacion">
+        <div id="progreso">50% de relajación</div>
+    </div>
+    
+     <!-- Botón "Quiero continuar con la experiencia" -->
+     <button id="boton-continuar" onclick="continuarExperiencia()">Quiero continuar con la experiencia</button>
+        
+    <h1 id="texto-inicial">¿Preparadx para la experiencia más relajante de tu vida?</h1>
+    <button id="boton-pulsame" onclick="mostrarImagen()">Púlsame</button> <!-- El primer botón -->
+    
+    <div id="overlay" onclick="ocultarImagen()"></div>
+    <div id="imagen-emergente">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Barbados_beach.jpg" alt="Imagen relajante">
+    </div>
+    
+    <button id="boton-premium" onclick="activarPremium()">RELAJACIÓN PREMIUM</button>
+
+    <div id="nueva-imagen">
+        <img src="https://www.cancer.gov/sites/g/files/xnrzdm211/files/styles/cgov_article/public/cgov_image/media_image/100/800/8/files/ocean-sunset-view-mykonos-spanish-article.jpeg?h=190fd85d&itok=RUaJVYtB" alt="Otra imagen relajante">
+    </div>
+
+    <!-- Nueva imagen y video que se mostrarán al hacer clic en el botón de continuar -->
+    <div id="nueva-imagen">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Maldives.jpg" alt="Otra imagen relajante">
+    </div>
+
+    <div id="video">
+        <iframe 
+            src="https://www.youtube.com/embed/WpzZbKqcoJg?start=120&autoplay=1" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <div id="gif-premium">
+        <img src="https://i.pinimg.com/originals/b0/3b/1c/b03b1c60e903c5523c0019fc557ceca4.gif" alt="GIF Relajante">
+    </div>
+    <div id="ventana-web">
+        <div id="barra-titulo">
+            <span id="boton-cerrar"></span>
+        </div>
+        <div id="contenido-ventana">
+            <p id="texto-ventana">ESPERE PARA ARREGLAR EL ERROR</p>
+        </div>
+        <div id="barra-cargando">
+            <div id="barra"></div>
+            <span id="cargando-texto">Cargando...</span>
+        </div>
+        <div id="mensaje-error" style="display: none;">
+            <p>¡No se ha podido arreglar!</p>
+        </div>
+  
+        
+        
+    <script>
+
+       // Función para crear botones en posiciones aleatorias
+       function crearBotonesParar() {
+  for (let i = 0; i < 20; i++) {
+    const boton = document.createElement('button');
+    boton.innerText = 'PARAR';
+    boton.style.top = `${Math.random() * 100}%`;
+    boton.style.left = `${Math.random() * 100}%`;
+    document.body.appendChild(boton);
+
+    // Asegurarse de que solo un botón funcione
+    if (i === 0) { // El primer botón será el que funcione
+      boton.onclick = function() {
+        alert("¡Has detenido la acción!");
+        detenerAccion();  // Aquí puedes poner lo que quieres que detenga
+        location.reload(); // Recarga la página
+      };
+    } else {
+      boton.disabled = true; // Desactivar todos los demás botones
+    }
+  }
+}
+
+// Función que simula la detención de una acción (puede ser un sonido, animación, etc.)
+function detenerAccion() {
+  // Aquí puedes poner lo que quieras que suceda cuando el botón funcione
+  console.log('Acción detenida');
+}
+
+        // Lista de URLs de los vídeos que se deben reproducir
+const listaDeVideos = [
+    "https://www.youtube.com/embed/EzkUe9FzPQk?autoplay=1",
+    "https://www.youtube.com/embed/Dgxz_BsUnoI?autoplay=1",
+    "https://www.youtube.com/embed/vW-EKgfJnf4?autoplay=1"
+    // Añadir más vídeos si es necesario
+];
+function mostrarVideosSecuenciales() {
+    // Contador de vídeos
+    let contadorVideos = 0;
+
+    // Función para mostrar un vídeo
+    function mostrarSiguienteVideo() {
+        // Si ya no hay más vídeos, detiene el proceso
+        if (contadorVideos >= listaDeVideos.length) {
+            return;
+        }
+
+        // Crear el contenedor del vídeo
+        const videoContainer = document.createElement("div");
+        videoContainer.style.position = "fixed";
+        videoContainer.style.zIndex = "10000";
+        videoContainer.style.padding = "20px";
+
+        videoContainer.style.borderRadius = "10px";
+
+        // Crear el iframe del vídeo
+        const videoIframe = document.createElement("iframe");
+        videoIframe.src = listaDeVideos[contadorVideos];
+        videoIframe.width = "600";  // Ajusta el tamaño según lo que necesites
+        videoIframe.height = "425";
+        videoIframe.allow = "autoplay; encrypted-media";
+        videoIframe.style.border = "none";
+        videoIframe.style.borderRadius = "10px";
+
+        // Posicionar los vídeos en las esquinas
+        if (contadorVideos % 2 === 0) {
+            // Vídeo en la esquina superior izquierda
+            videoContainer.style.top = "20px";
+            videoContainer.style.left = "20px";
+        } else {
+            // Vídeo en la esquina inferior derecha
+            videoContainer.style.bottom = "20px";
+            videoContainer.style.right = "20px";
+        }
+
+        // Añadir el iframe al contenedor
+        videoContainer.appendChild(videoIframe);
+
+        // Añadir el contenedor del vídeo al documento
+        document.body.appendChild(videoContainer);
+
+        // Incrementar el contador para el siguiente vídeo
+        contadorVideos++;
+
+        // Después de 10 segundos (ajusta el tiempo), mostrar el siguiente vídeo
+        setTimeout(mostrarSiguienteVideo, 1000);  // Ajusta el tiempo entre vídeos según sea necesario
+    }
+
+    // Iniciar la reproducción de vídeos
+    mostrarSiguienteVideo();
+    setTimeout(crearBotonesParar, 10000);
+}
+
+function mostrarVentana() {
+    // Mostrar la ventana de error
+    const ventana = document.getElementById("ventana-web");
+    ventana.style.display = "block";  // Muestra la ventana
+
+    // Animar la barra de carga
+    const barra = document.getElementById('barra');
+    barra.style.animation = 'cargarBarra 5s linear forwards';  // Inicia la animación de la barra
+
+    // Esperar 6 segundos para ocultar la ventana de error
+    setTimeout(function() {
+        // Ocultar la ventana de error después de 6 segundos
+        ventana.style.display = 'none';
+
+        // Mostrar el mensaje de error (mensaje-error) después de ocultar la ventana
+        const mensajeError = document.getElementById("mensaje-error");
+        mensajeError.style.display = "block"; // Asegurarse de que se muestra el mensaje de error
+    }, 6000); // Aquí especificas el tiempo en milisegundos
+    mostrarVideosSecuenciales()
+}
+
+  function generarPixelGlitch() {
+    // Crear un píxel
+    const pixel = document.createElement("div");
+    pixel.classList.add("pixel-glitch");
+
+    // Posición aleatoria en la pantalla
+    const posX = Math.random() * window.innerWidth;
+    const posY = Math.random() * window.innerHeight;
+
+    // Asignar posición al píxel
+    pixel.style.left = `${posX}px`;
+    pixel.style.top = `${posY}px`;
+
+    // Color aleatorio
+    pixel.style.backgroundColor = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`;
+
+    // Añadir el píxel al documento
+    document.body.appendChild(pixel);
+
+}
+
+function iniciarGlitch() {
+    // Generar varios píxeles de glitch en un intervalo
+    const glitchInterval = setInterval(() => {
+        generarPixelGlitch();
+    }, 50); // Frecuencia de aparición
+
+}
+
+function mostrarErroresYGlitch() {
+   // Supongamos que 'ventana' es un elemento que podría estar visible o no
+if (ventana.style.display = 'none') {  
+}
+
+
+    mostrarErrores(); // Mostrar errores primero
+    setTimeout(iniciarGlitch, 2000); // Iniciar glitch después de 2 segundos
+}
+
+
+
+        function mostrarErrores() {
+            for (let i = 0; i < 5; i++) {
+                let errorDiv = document.createElement("div");
+                errorDiv.classList.add("error");
+                errorDiv.innerText = "ERR0R";
+
+                // Posicionar el error en una posición aleatoria
+                errorDiv.style.top = `${Math.random() * window.innerHeight}px`;
+                errorDiv.style.left = `${Math.random() * window.innerWidth}px`;
+
+                // Añadir el error a la página
+                document.body.appendChild(errorDiv);
+                setTimeout (function() {
+                iniciarGlitch();
+                }, 3000);
+                 setTimeout(function() {
+                mostrarVentana()
+                }, 500); // Un pequeño retraso si quieres que se vea después del glitch
+
+            
+
+        
+            }
+        }
+
+    
+        let contadorClics = 0;
+        
+
+        function moverBotonPremium() {
+            const botonPremium = document.getElementById("boton-premium");
+    
+
+     // Cambiar la posición del botón cada vez que se hace clic
+        if (contadorClics === 1) {
+            botonPremium.style.position = "absolute";
+            botonPremium.style.top = "100px"; // Mover a la parte inferior
+            botonPremium.style.left = "500px"; // Mover a la parte izquierda
+        } else if (contadorClics === 2) {
+        botonPremium.style.top = "300px"; // Nueva posición
+        botonPremium.style.left = "900px";
+        }  if (contadorClics > 2) {
+        // Generar posiciones aleatorias después del segundo clic
+        const randomTop = Math.floor(Math.random() * (window.innerHeight - 50)); // Altura de la ventana menos el tamaño del botón
+        const randomLeft = Math.floor(Math.random() * (window.innerWidth - 100)); // Ancho de la ventana menos el tamaño del botón
+        botonPremium.style.top = `${randomTop}px`;
+        botonPremium.style.left = `${randomLeft}px`;
+        if (contadorClics === 4) {
+    botonPremium.style.display = "none"; // Ocultar el botón
+    alert("DEJALO YA, voy a hacerlo desaparecer...");
+    mostrarVideos(); // Llamar a esta función para mostrar el video
+    multiplesvideos ();
+    return; // Salir de la función
+    
+
+    function multiplesvideos() {
+    // Crear contenedor para la primera imagen
+    const imageContainer = document.createElement("div");
+    imageContainer.style.position = "fixed";
+    imageContainer.style.top = "80%";
+    imageContainer.style.left = "80%";
+    imageContainer.style.transform = "translate(-50%, -50%)";
+    imageContainer.style.zIndex = "10000";
+    imageContainer.style.padding = "20px";
+    imageContainer.style.borderRadius = "10px";
+
+    // Crear la primera imagen
+    const image = document.createElement("img");
+    image.src = "https://i.pinimg.com/736x/ed/aa/01/edaa01070b002af7712315bf465c88c5.jpg"; // URL de la imagen
+    image.width = 700;
+    image.height = 350;
+    image.style.borderRadius = "10px";
+
+    // Añadir la primera imagen al contenedor
+    imageContainer.appendChild(image);
+
+
+    // Crear contenedor para el video
+    const videoContainer = document.createElement("div");
+    videoContainer.style.position = "fixed";
+    videoContainer.style.top = "50%";
+    videoContainer.style.left = "50%";
+    videoContainer.style.transform = "translate(-50%, -50%)";
+    videoContainer.style.zIndex = "10100"; // Menor que la imagen
+    videoContainer.style.padding = "20px";
+    videoContainer.style.borderRadius = "10px";
+
+    const videoIframe = document.createElement("iframe");
+    videoIframe.src = "https://www.youtube.com/embed/6wqcni74cM4?autoplay=1"; // URL del video
+    videoIframe.width = "600";
+    videoIframe.height = "350";
+    videoIframe.allow = "autoplay; encrypted-media";
+    videoIframe.style.border = "none";
+    videoIframe.style.borderRadius = "10px";
+
+    // Añadir el iframe al contenedor del video
+    videoContainer.appendChild(videoIframe);
+
+    // Añadir el contenedor del video al documento
+    document.body.appendChild(videoContainer);
+
+    // Añadir la primera imagen después de 3 segundos
+    setTimeout(function() {
+        document.body.appendChild(imageContainer);
+    }, 3000);
+
+    setTimeout(function() {
+       mostrarErrores();
+    }, 6000);
+        
+
+}
+
+
+function mostrarVideos() {
+    // Crear un contenedor para el video
+    const videoContainer = document.createElement("div");
+    videoContainer.style.position = "fixed";
+    videoContainer.style.top = "30%";
+    videoContainer.style.left = "50%";
+    videoContainer.style.transform = "translate(-50%, -50%)";
+    videoContainer.style.zIndex = "10000";
+    videoContainer.style.padding = "20px";
+    videoContainer.style.borderRadius = "10px";
+
+    // Crear un iframe para el video
+    const videoIframe = document.createElement("iframe");
+    videoIframe.src = "https://www.youtube.com/embed/HMTKMWHLbdQ?autoplay=1"; // URL del video
+    videoIframe.width = "800";
+    videoIframe.height = "450";
+    videoIframe.allow = "autoplay; encrypted-media";
+    videoIframe.style.border = "none";
+    videoIframe.style.borderRadius = "10px";
+
+    // Añadir el iframe al contenedor
+    videoContainer.appendChild(videoIframe);
+
+    // Añadir el contenedor al cuerpo del documento
+    document.body.appendChild(videoContainer);
+    
+    console.log("Esperando 3 segundos antes de ejecutar multiplesvideos...");
+
+    setTimeout(function() {
+        console.log("Ejecutando multiplesvideos ahora...");
+         multiplesvideos();
+    }, 6000);
+}
+
+}
+    }
+}
+function activarPremium() {
+            contadorClics++; // Incrementar el contador antes de mover
+            moverBotonPremium(); // Mover el botón después
+
+            const videoContainer = document.getElementById("video-premium");
+    const iframe = document.getElementById("video-premium-iframe");
+    iframe.src = "https://www.youtube.com/embed/D0f6ODkSgPk?autoplay=1";
+    videoContainer.style.display = "block";
+
+}
+
+
+        function mostrarImagen() {
+    document.getElementById("boton-pulsame").style.display = "none";
+    document.getElementById("texto-inicial").style.display = "none";
+    document.getElementById("overlay").style.display = "block";  // Muestra el overlay
+    document.getElementById("imagen-emergente").style.display = "block";  // Muestra la imagen emergente
+    document.getElementById("boton-continuar").style.display = "block";  // Muestra el botón de continuar
+}
+
+        
+        function ocultarImagen() {
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function continuarExperiencia() {
+    document.getElementById("barra-relajacion").style.display = "block";  // Muestra la barra de relajación
+    document.getElementById("nueva-imagen").style.display = "block";  // Muestra la nueva imagen
+    document.getElementById("video").style.display = "block";  // Muestra el video
+    document.getElementById("boton-continuar").style.display = "none";  // Oculta el botón de continuar
+    document.getElementById("boton-premium").style.display = "block";  // Muestra el botón de relajación premium
+
+    setTimeout(function() {
+        document.getElementById("nueva-imagen").style.display = "block";  // Muestra la nueva imagen después de medio segundo
+    }, 1000);  // El tiempo de espera es 500 milisegundos (0.5 segundos)
+
+}
+
+        function activarPremium() {
+             
+        
+            const videoContainer = document.getElementById("video-premium");
+            const iframe = document.getElementById("video-premium-iframe");
+            iframe.src = "https://www.youtube.com/embed/D0f6ODkSgPk?autoplay=1";
+            videoContainer.style.display = "block"; // Muestra el video
+
+             // Aumentamos el contador de clics
+             contadorClics++;  
+
+             if (contadorClics === 1) {
+            setTimeout(function() {
+                alert("¡Has activado RELAJACIÓN PREMIUM!");
+            }, 300);
+        } else if (contadorClics === 2) {
+            setTimeout(function() {
+                alert("¡YA ACTIVASTE RELAJACIÓN PREMIUM!");
+            }, 300);
+            mostrarMasContenido();
+        } else {
+            setTimeout(function() {
+                alert("¡BASTA, NO PULSES MÁS!");
+            }, 300);
+            
+        }
+    
+            // Muestra el letrero de relajación premium
+            document.getElementById("letrero-premium").style.display = "block";
+            
+             // Después de 2 segundos, muestra el video
+    setTimeout(function() {
+        document.getElementById("video-premium").style.display = "block";
+    }, 1000); // 2000 ms = 2 segundos
+
+    setTimeout(function() {
+                document.getElementById("gif-premium").style.display = "block"; // Muestra el GIF 2 segundos después del video
+            }, 1000); // 2 segundos
+            moverBotonPremium(); // Llamada a la función que mueve el botón
+    
+    setTimeout(function () {
+        mostrarVideoRelajante();
+    }, 1000); // 3 segundos después de que aparece el
+
+
+            // Nueva función para mostrar más contenido
+
+            function mostrarVideoRelajante() {
+    const nuevoVideo = document.createElement("iframe");
+    nuevoVideo.src = "https://www.youtube.com/embed/XjVIcH_sy-8?autoplay=1"; // URL del video relajante
+    nuevoVideo.width = "700";
+    nuevoVideo.height = "350";
+    nuevoVideo.allow = "autoplay; encrypted-media";
+    nuevoVideo.style.position = "fixed";
+    nuevoVideo.style.bottom = "0px";
+    nuevoVideo.style.left = "50%";
+    nuevoVideo.style.transform = "translateX(-50%)";
+    nuevoVideo.style.zIndex = "1200";
+    nuevoVideo.style.borderRadius = "10px";
+    nuevoVideo.style.border = "2px solid #fff";
+    document.body.appendChild(nuevoVideo);
+}
+}
+        
+    
+
+        
+    </script>
+</body>
+</html>
+
+            background-color: rgb(240, 142, 127);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+              z-index: 1300;
+        }
+
+        #boton-premium:hover {
+            background-color: orange;
+        }
+
+        .contenedor-imagen {
+            display: flex;
+            justify-content: center;
+        }
+
+        #texto-inicial {
+    position: relative;
+    top: -50px; /* Ajusta este valor según necesites */
+}
+
+
+    </style>
+        
+  </head>
